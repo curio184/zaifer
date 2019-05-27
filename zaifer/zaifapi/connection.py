@@ -91,11 +91,53 @@ class UrlConfigs():
     ZaifAPIの接続情報を表します。
     '''
 
-    publicApiUrl = 'https://api.zaif.jp/api/1'
-    tradeApiUrl = 'https://api.zaif.jp/tapi'
-    futureTradeApiUrl = 'https://api.zaif.jp/fapi/1'
-    marginTradeApiUrl = 'https://api.zaif.jp/tlapi'
-    chartApiUrl = 'https://zaif.jp/zaif_chart_api/v1'
+    def __init__(self):
+
+        self._publicApiUrl = 'https://api.zaif.jp/api/1'
+        self._tradeApiUrl = 'https://api.zaif.jp/tapi'
+        self._futureTradeApiUrl = 'https://api.zaif.jp/fapi/1'
+        self._marginTradeApiUrl = 'https://api.zaif.jp/tlapi'
+        self._chartApiUrl = 'https://zaif.jp/zaif_chart_api/v1'
+
+    @property
+    def publicApiUrl(self) -> str:
+        return self._publicApiUrl
+
+    @publicApiUrl.setter
+    def publicApiUrl(self, value: str):
+        self._publicApiUrl = value
+
+    @property
+    def tradeApiUrl(self) -> str:
+        return self._tradeApiUrl
+
+    @tradeApiUrl.setter
+    def tradeApiUrl(self, value: str):
+        self._tradeApiUrl = value
+
+    @property
+    def futureTradeApiUrl(self) -> str:
+        return self._futureTradeApiUrl
+
+    @futureTradeApiUrl.setter
+    def futureTradeApiUrl(self, value: str):
+        self._futureTradeApiUrl = value
+
+    @property
+    def marginTradeApiUrl(self) -> str:
+        return self._marginTradeApiUrl
+
+    @marginTradeApiUrl.setter
+    def marginTradeApiUrl(self, value: str):
+        self._marginTradeApiUrl = value
+
+    @property
+    def chartApiUrl(self) -> str:
+        return self._chartApiUrl
+
+    @chartApiUrl.setter
+    def chartApiUrl(self, value: str):
+        self._chartApiUrl = value
 
 
 class NonceGenerator():
@@ -104,7 +146,7 @@ class NonceGenerator():
     '''
 
     @staticmethod
-    def generate()->Decimal:
+    def generate() -> Decimal:
         '''
         ノンスを生成します。
         '''
@@ -121,7 +163,7 @@ class ResponseParser():
     '''
 
     @staticmethod
-    def parse(response: str)->str:
+    def parse(response: str) -> str:
         '''
         レスポンスをパースします。
         '''

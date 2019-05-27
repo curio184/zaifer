@@ -7,16 +7,16 @@ class Chart():
     チャート情報を取得します。
     '''
 
-    def __init__(self):
+    def __init__(self, url_config: UrlConfigs = UrlConfigs()):
         '''
         コンストラクタ
         '''
-        self._connection = HttpConnection(UrlConfigs.chartApiUrl)
+        self._connection = HttpConnection(url_config.chartApiUrl)
 
     def get_ohlc(self, currency_pair: str, period: str, since: datetime, end: datetime) -> str:
         '''
         チャート情報を取得します。
-        period : 
+        period :
             1分足:1、5分足:5、15分足:15、30分足:30、1時間足:60、4時間足:240、8時間足:480
             日足:D、週足:?、月足:?
         '''
@@ -34,11 +34,11 @@ class Account():
     アカウント情報を取得します。
     '''
 
-    def __init__(self, key, secret):
+    def __init__(self, key, secret, url_config: UrlConfigs = UrlConfigs()):
         '''
         コンストラクタ
         '''
-        self._connection = HttpConnection(UrlConfigs.tradeApiUrl, key, secret)
+        self._connection = HttpConnection(url_config.tradeApiUrl, key, secret)
 
     def get_info(self) -> str:
         '''
@@ -140,11 +140,11 @@ class Market():
     現物取引のマーケット情報を取得します。
     '''
 
-    def __init__(self):
+    def __init__(self, url_config: UrlConfigs = UrlConfigs()):
         '''
         コンストラクタ
         '''
-        self._connection = HttpConnection(UrlConfigs.publicApiUrl)
+        self._connection = HttpConnection(url_config.publicApiUrl)
 
     def get_currencies(self, currency: str) -> str:
         '''
@@ -188,11 +188,11 @@ class Trade():
     現物取引の注文情報を取得・送信します。
     '''
 
-    def __init__(self, key, secret):
+    def __init__(self, key, secret, url_config: UrlConfigs = UrlConfigs()):
         '''
         コンストラクタ
         '''
-        self._connection = HttpConnection(UrlConfigs.tradeApiUrl, key, secret)
+        self._connection = HttpConnection(url_config.tradeApiUrl, key, secret)
 
     def get_trade_history_by_period(self, currency_pair: str = None, since: datetime = None, end: datetime = None) -> str:
         '''
@@ -261,12 +261,11 @@ class FutureMarket():
     先物取引のマーケット情報を取得します。
     '''
 
-    def __init__(self):
+    def __init__(self, url_config: UrlConfigs = UrlConfigs()):
         '''
         コンストラクタ
         '''
-        self._connection = HttpConnection(
-            UrlConfigs.futureTradeApiUrl)
+        self._connection = HttpConnection(url_config.futureTradeApiUrl)
 
     def get_groups(self, group_id: int) -> str:
         '''
@@ -312,12 +311,12 @@ class MarginTrade():
     証拠金取引(信用取引および先物取引)の注文情報を取得・送信します。
     '''
 
-    def __init__(self, key, secret):
+    def __init__(self, key, secret, url_config: UrlConfigs = UrlConfigs()):
         '''
         コンストラクタ
         '''
         self._connection = HttpConnection(
-            UrlConfigs.marginTradeApiUrl, key, secret)
+            url_config.marginTradeApiUrl, key, secret)
 
     def get_positions(self, type: str, group_id: int = None, currency_pair: str = None, since: datetime = None, end: datetime = None) -> str:
         '''
