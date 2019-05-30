@@ -44,5 +44,5 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     keywords='zaif zaifapi zaif-exchange trade bot',
-    install_requires=['requests']
+    install_requires=['requests', 'cerberus']
 )

@@ -1,5 +1,6 @@
 from zaifer.zaifapi.connection import *
 from zaifer.zaifapi.exception import *
+from zaifer.zaifapi.validation import *
 
 
 class Chart():
@@ -13,6 +14,7 @@ class Chart():
         '''
         self._connection = HttpConnection(url_config.chartApiUrl)
 
+    @zaifapi_schema_validator
     def get_ohlc(self, currency_pair: str, period: str, since: datetime, end: datetime) -> str:
         '''
         チャート情報を取得します。
@@ -40,6 +42,7 @@ class Account():
         '''
         self._connection = HttpConnection(url_config.tradeApiUrl, key, secret)
 
+    @zaifapi_schema_validator
     def get_info(self) -> str:
         '''
         アカウント情報を取得します。
@@ -51,6 +54,7 @@ class Account():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
+    @zaifapi_schema_validator
     def get_info2(self) -> str:
         '''
         アカウント情報を取得します。(軽量版)
@@ -62,6 +66,7 @@ class Account():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
+    @zaifapi_schema_validator
     def get_personal_info(self) -> str:
         '''
         アカウントのチャット情報を取得します。
@@ -73,6 +78,7 @@ class Account():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
+    @zaifapi_schema_validator
     def get_id_info(self) -> str:
         '''
         アカウントの基本情報を取得します。
@@ -84,6 +90,7 @@ class Account():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
+    @zaifapi_schema_validator
     def withdraw(self, currency: str, address: str, amount: Decimal, message: str = None, opt_fee: Decimal = None) -> str:
         '''
         出金依頼を送信します。
@@ -102,6 +109,7 @@ class Account():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
+    @zaifapi_schema_validator
     def get_deposit_history_by_period(self, currency: str, since: datetime = None, end: datetime = None) -> str:
         '''
         入金履歴を取得します。
@@ -118,6 +126,7 @@ class Account():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
+    @zaifapi_schema_validator
     def get_withdraw_history_by_period(self, currency: str, since: datetime = None, end: datetime = None) -> str:
         '''
         出金履歴を取得します。
@@ -146,36 +155,42 @@ class Market():
         '''
         self._connection = HttpConnection(url_config.publicApiUrl)
 
+    @zaifapi_schema_validator
     def get_currencies(self, currency: str) -> str:
         '''
         通貨情報を取得します。
         '''
         return self._connection.get('/currencies/{}'.format(currency), None)
 
+    @zaifapi_schema_validator
     def get_currency_pairs(self, currency_pair: str) -> str:
         '''
         通貨ペア情報を取得します。
         '''
         return self._connection.get('/currency_pairs/{}'.format(currency_pair), None)
 
+    @zaifapi_schema_validator
     def get_last_price(self, currency_pair: str) -> str:
         '''
         現在の終値を取得します。
         '''
         return self._connection.get('/last_price/{}'.format(currency_pair), None)
 
+    @zaifapi_schema_validator
     def get_ticker(self, currency_pair: str) -> str:
         '''
         ティッカーを取得します。
         '''
         return self._connection.get('/ticker/{}'.format(currency_pair), None)
 
+    @zaifapi_schema_validator
     def get_trade_history(self, currency_pair: str) -> str:
         '''
         全ユーザーの取引履歴を取得します。
         '''
         return self._connection.get('/trades/{}'.format(currency_pair), None)
 
+    @zaifapi_schema_validator
     def get_depth(self, currency_pair: str) -> str:
         '''
         板情報を取得します。
@@ -194,6 +209,7 @@ class Trade():
         '''
         self._connection = HttpConnection(url_config.tradeApiUrl, key, secret)
 
+    @zaifapi_schema_validator
     def get_trade_history_by_period(self, currency_pair: str = None, since: datetime = None, end: datetime = None) -> str:
         '''
         ユーザー自身の取引履歴を取得します。
@@ -211,6 +227,7 @@ class Trade():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
+    @zaifapi_schema_validator
     def get_active_orders(self, currency_pair: str = None) -> str:
         '''
         現在有効な注文一覧を取得します（未約定注文一覧）。
@@ -224,6 +241,7 @@ class Trade():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
+    @zaifapi_schema_validator
     def open_order(self, currency_pair: str, action: str, price: Decimal, amount: Decimal, limit: Decimal = None, comment: str = None) -> str:
         '''
         新規注文を送信します。
@@ -243,6 +261,7 @@ class Trade():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
+    @zaifapi_schema_validator
     def cancel_order(self, order_id: int) -> str:
         '''
         キャンセル注文を送信します。
@@ -267,6 +286,7 @@ class FutureMarket():
         '''
         self._connection = HttpConnection(url_config.futureTradeApiUrl)
 
+    @zaifapi_schema_validator
     def get_groups(self, group_id: int) -> str:
         '''
         先物取引のグループIDを取得します。
@@ -275,30 +295,35 @@ class FutureMarket():
         '''
         return self._connection.get('/groups/{}'.format(str(group_id)), None)
 
+    @zaifapi_schema_validator
     def get_last_price(self, group_id: int, currency_pair: str) -> str:
         '''
         現在の終値を取得します。
         '''
         return self._connection.get('/last_price/{}/{}'.format(str(group_id), currency_pair), None)
 
+    @zaifapi_schema_validator
     def get_ticker(self, group_id: int, currency_pair: str) -> str:
         '''
         ティッカーを取得します。
         '''
         return self._connection.get('/ticker/{}/{}'.format(str(group_id), currency_pair), None)
 
+    @zaifapi_schema_validator
     def get_trade_history(self, group_id: int, currency_pair: str) -> str:
         '''
         全ユーザの取引履歴を取得します。
         '''
         return self._connection.get('/trades/{}/{}'.format(str(group_id), currency_pair), None)
 
+    @zaifapi_schema_validator
     def get_depth(self, group_id: int, currency_pair: str) -> str:
         '''
         板情報を取得します。
         '''
         return self._connection.get('/depth/{}/{}'.format(str(group_id), currency_pair), None)
 
+    @zaifapi_schema_validator
     def get_swap_history(self, group_id: int, currency_pair: str) -> str:
         '''
         確定したスワップポイントの履歴を取得します。
@@ -318,6 +343,7 @@ class MarginTrade():
         self._connection = HttpConnection(
             url_config.marginTradeApiUrl, key, secret)
 
+    @zaifapi_schema_validator
     def get_positions(self, type: str, group_id: int = None, currency_pair: str = None, since: datetime = None, end: datetime = None) -> str:
         '''
         証拠金取引のユーザー自身の取引履歴を取得します。
@@ -338,6 +364,7 @@ class MarginTrade():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
+    @zaifapi_schema_validator
     def position_history(self, type: str, group_id: int, order_id: int) -> str:
         '''
         証拠金取引のユーザー自身の取引履歴の明細を取得します。
@@ -353,6 +380,7 @@ class MarginTrade():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
+    @zaifapi_schema_validator
     def get_active_positions(self, type: str, group_id: int = None, currency_pair: str = None) -> str:
         '''
         証拠金取引の現在有効な注文一覧を取得します（未約定注文一覧）。
@@ -369,6 +397,7 @@ class MarginTrade():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
+    @zaifapi_schema_validator
     def create_position(self, type: str, group_id: int, currency_pair: str, action: str, price: Decimal, amount: Decimal, leverage: Decimal, limit: Decimal = None, stop: Decimal = None) -> str:
         '''
         証拠金取引の新規注文を送信します。
@@ -392,6 +421,7 @@ class MarginTrade():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
+    @zaifapi_schema_validator
     def update_position(self, type: str, group_id: int, order_id: int, price: Decimal, limit: Decimal = None, stop: Decimal = None) -> str:
         '''
         証拠金取引の修正注文を送信します。
@@ -412,6 +442,7 @@ class MarginTrade():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
+    @zaifapi_schema_validator
     def cancel_position(self, type: str, group_id: int, order_id: int) -> str:
         '''
         証拠金取引のキャンセル注文を送信します。
