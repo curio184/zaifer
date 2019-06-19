@@ -59,7 +59,7 @@ class HttpConnection():
         url = self._base_url + method
 
         # GET要求を送信
-        response = requests.get(url, params)
+        response = requests.get(url, params=params)
 
         # レスポンスを取得
         if response.status_code != 200:
