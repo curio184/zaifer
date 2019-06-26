@@ -24,7 +24,7 @@ class HttpConnection():
         self._key = key
         self._secret = secret
 
-    def post(self, method: str, params: dict) -> str:
+    def post(self, method: str, params: dict) -> dict:
         '''
         POST要求を送信します。
         '''
@@ -47,7 +47,7 @@ class HttpConnection():
                 'return status code is {}'.format(response.status_code))
         return json.loads(response.text)
 
-    def get(self, method: str, params: dict) -> str:
+    def get(self, method: str, params: dict) -> dict:
         '''
         GET要求を送信します。
         '''
@@ -163,7 +163,7 @@ class ResponseParser():
     '''
 
     @staticmethod
-    def parse(response: str) -> str:
+    def parse(response: dict) -> dict:
         '''
         レスポンスをパースします。
         '''
