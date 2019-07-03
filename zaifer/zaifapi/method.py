@@ -26,9 +26,12 @@ class Chart():
             'from': str(int(time.mktime(from_datetime.timetuple()))),
             'to': str(int(time.mktime(to_datetime.timetuple())))
         }
-        # NOTE:なぜか2度エンコードされているのでデコードも2度する
         res = self._connection.get('/history', params)
-        return json.loads(res)
+        # NOTE:取得に成功した場合、なぜか2度エンコードされているのでデコードも2度する
+        if type(res) is str:
+            return json.loads(res)
+        else:
+            return res
 
 
 class Account():
