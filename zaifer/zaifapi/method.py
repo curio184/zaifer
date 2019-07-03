@@ -12,18 +12,17 @@ class Chart():
         '''
         self._connection = HttpConnection(url_config.chartApiUrl)
 
-    def get_ohlc(self, currency_pair: str, period: str, since: datetime, end: datetime) -> dict:
+    def get_ohlc(self, currency_pair: str, period: str, from_datetime: datetime, to_datetime: datetime) -> dict:
         '''
         チャート情報を取得します。
         period :
-            1分足:1、5分足:5、15分足:15、30分足:30、1時間足:60、4時間足:240、8時間足:480
-            日足:D、週足:?、月足:?
+            1分足:1、5分足:5、15分足:15、30分足:30、1時間足:60、4時間足:240、8時間足:480、12時間足:720、1日足:D、1週足:W
         '''
         params = {
             'symbol': currency_pair,
             'resolution': period,
-            'from': str(int(time.mktime(since.timetuple()))),
-            'to': str(int(time.mktime(end.timetuple())))
+            'from': str(int(time.mktime(from_datetime.timetuple()))),
+            'to': str(int(time.mktime(to_datetime.timetuple())))
         }
         return self._connection.get('/history', params)
 
