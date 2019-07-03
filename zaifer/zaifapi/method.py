@@ -1,3 +1,5 @@
+import json
+
 from zaifer.zaifapi.connection import *
 
 
@@ -24,7 +26,9 @@ class Chart():
             'from': str(int(time.mktime(from_datetime.timetuple()))),
             'to': str(int(time.mktime(to_datetime.timetuple())))
         }
-        return self._connection.get('/history', params)
+        # NOTE:なぜか2度エンコードされているのでデコードも2度する
+        res = self._connection.get('/history', params)
+        return json.loads(res)
 
 
 class Account():
