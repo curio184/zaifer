@@ -178,6 +178,8 @@ class ResponseParser():
                 raise NonceNotIcreasedException(response['error'])
             elif response['error'] == 'nonce out of range':
                 raise NonceOutOfRangeException(response['error'])
+            elif response['error'] == 'trade temporarily unavailable.':
+                raise TradeTemporarilyUnavailableException(response['error'])
             raise Exception(response['error'])
 
         return response['return']

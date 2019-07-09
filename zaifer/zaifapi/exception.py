@@ -33,3 +33,10 @@ class NonceOutOfRangeException(Exception):
     ナンスが範囲外です。
     '''
     pass
+
+
+class TradeTemporarilyUnavailableException(Exception):
+    '''
+    お取引が一時的に利用できません。
+    '''
+    pass
