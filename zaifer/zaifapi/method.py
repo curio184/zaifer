@@ -238,8 +238,8 @@ class Trade():
             'nonce': NonceGenerator.generate(),
             'currency_pair': currency_pair,
             'action': action,
-            'price': price,
-            'amount': amount
+            'price': self._decimal_to_str(price),
+            'amount': self._decimal_to_str(amount)
         }
         if limit is not None:
             params['limit'] = limit
@@ -261,6 +261,12 @@ class Trade():
             params['currency_pair'] = currency_pair
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
+
+    def _decimal_to_str(self, value: Decimal) -> str:
+        if value == value.to_integral_value():
+            return str(value.quantize(Decimal(1)))
+        else:
+            return str(value.normalize())
 
 
 class FutureMarket():
