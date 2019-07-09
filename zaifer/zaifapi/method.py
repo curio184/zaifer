@@ -248,7 +248,7 @@ class Trade():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
-    def cancel_order(self, order_id: int) -> dict:
+    def cancel_order(self, order_id: int, currency_pair: str = None) -> dict:
         '''
         キャンセル注文を送信します。
         '''
@@ -257,6 +257,8 @@ class Trade():
             'nonce': NonceGenerator.generate(),
             'order_id': order_id
         }
+        if currency_pair is not None:
+            params['currency_pair'] = currency_pair
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
