@@ -40,3 +40,10 @@ class TradeTemporarilyUnavailableException(Exception):
     お取引が一時的に利用できません。
     '''
     pass
+
+
+class InvalidAmountException(Exception):
+    '''
+    数量が不正です。
+    '''
+    pass

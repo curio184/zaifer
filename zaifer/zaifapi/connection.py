@@ -180,6 +180,8 @@ class ResponseParser():
                 raise NonceOutOfRangeException(response['error'])
             elif response['error'] == 'trade temporarily unavailable.':
                 raise TradeTemporarilyUnavailableException(response['error'])
+            elif response['error'] == 'invalid amount parameter':
+                raise InvalidAmountException(response['error'])
             raise Exception(response['error'])
 
         return response['return']
