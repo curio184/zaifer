@@ -182,6 +182,8 @@ class ResponseParser():
                 raise TradeTemporarilyUnavailableException(response['error'])
             elif response['error'] == 'invalid amount parameter':
                 raise InvalidAmountException(response['error'])
+            elif response['error'] == 'time out':
+                raise TimeoutException(response['error'])
             raise Exception(response['error'])
 
         return response['return']

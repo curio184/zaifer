@@ -47,3 +47,10 @@ class InvalidAmountException(Exception):
     数量が不正です。
     '''
     pass
+
+
+class TimeoutException(Exception):
+    '''
+    リクエストがタイムアウトしました。
+    '''
+    pass
