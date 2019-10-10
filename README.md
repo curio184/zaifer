@@ -5,7 +5,7 @@ zaifer
 [![](https://img.shields.io/pypi/v/zaifer.svg)](https://pypi.org/project/zaifer/)
 
 zaiferとは、ZaifAPIをPythonから呼び出すためのライブラリです。
-ebapiを利用するための煩雑な手続きを隠蔽し、
+webapiを利用するための煩雑な手続きを隠蔽し、
 methodベースでZaifAPIを簡単に利用できます。
 
 使い方
