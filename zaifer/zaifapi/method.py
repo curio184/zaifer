@@ -17,7 +17,7 @@ class Chart():
         '''
         コンストラクタ
         '''
-        self._connection = HttpConnection(url_config.chartApiUrl)
+        self._connection = HttpConnection(url_config.chart_api_url)
 
     def get_ohlc(self, currency_pair: str, period: str, from_datetime: datetime, to_datetime: datetime) -> dict:
         '''
@@ -51,7 +51,7 @@ class Account():
         '''
         コンストラクタ
         '''
-        self._connection = HttpConnection(url_config.tradeApiUrl, key, secret)
+        self._connection = HttpConnection(url_config.trade_api_url, key, secret)
 
     def get_info(self) -> dict:
         '''
@@ -116,9 +116,9 @@ class Account():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
-    def get_deposit_history(self, currency: str, _from: int = None, count: int = None,
-                            from_id: int = None, end_id: int = None, order: str = None,
-                            since: datetime = None, end: datetime = None) -> dict:
+    def get_deposit_history(self, currency: str, since: datetime = None, end: datetime = None,
+                            _from: int = None, count: int = None,
+                            from_id: int = None, end_id: int = None, order: str = None) -> dict:
         '''
         入金履歴を取得します。
         '''
@@ -144,9 +144,9 @@ class Account():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
-    def get_withdraw_history(self, currency: str, _from: int = None, count: int = None,
-                             from_id: int = None, end_id: int = None, order: str = None,
-                             since: datetime = None, end: datetime = None) -> dict:
+    def get_withdraw_history(self, currency: str, since: datetime = None, end: datetime = None,
+                             _from: int = None, count: int = None,
+                             from_id: int = None, end_id: int = None, order: str = None) -> dict:
         '''
         出金履歴を取得します。
         '''
@@ -185,7 +185,7 @@ class Market():
         '''
         コンストラクタ
         '''
-        self._connection = HttpConnection(url_config.publicApiUrl)
+        self._connection = HttpConnection(url_config.public_api_url)
 
     def get_currencies(self, currency: str) -> dict:
         '''
@@ -236,7 +236,7 @@ class Trade():
         '''
         コンストラクタ
         '''
-        self._connection = HttpConnection(url_config.tradeApiUrl, key, secret)
+        self._connection = HttpConnection(url_config.trade_api_url, key, secret)
 
     def get_trade_history(self, currency_pair: str = None, since: datetime = None, end: datetime = None,
                           _from: int = None, count: int = None,
@@ -334,7 +334,7 @@ class MarginMarket():
         '''
         コンストラクタ
         '''
-        self._connection = HttpConnection(url_config.marginPublicApiUrl)
+        self._connection = HttpConnection(url_config.margin_public_api_url)
 
     def get_groups(self, group_id: str) -> dict:
         """
@@ -394,7 +394,7 @@ class MarginTrade():
         コンストラクタ
         '''
         self._connection = HttpConnection(
-            url_config.marginTradeApiUrl, key, secret)
+            url_config.margin_trade_api_url, key, secret)
 
     def get_positions(self, _type: str, group_id: int = None, currency_pair: str = None,
                       since: datetime = None, end: datetime = None, _from: int = None, count: int = None,
@@ -410,12 +410,6 @@ class MarginTrade():
         }
         if group_id is not None:
             params['group_id'] = group_id
-        if currency_pair is not None:
-            params['currency_pair'] = currency_pair
-        if since is not None:
-            params['since'] = str(int(time.mktime(since.timetuple())))
-        if end is not None:
-            params['end'] = str(int(time.mktime(end.timetuple())))
         if _from is not None:
             params['from'] = str(_from)
         if count is not None:
@@ -426,6 +420,12 @@ class MarginTrade():
             params['end_id'] = str(end_id)
         if order is not None:
             params['order'] = order
+        if since is not None:
+            params['since'] = str(int(time.mktime(since.timetuple())))
+        if end is not None:
+            params['end'] = str(int(time.mktime(end.timetuple())))
+        if currency_pair is not None:
+            params['currency_pair'] = currency_pair
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
@@ -517,3 +517,160 @@ class MarginTrade():
             params['group_id'] = group_id
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
+
+
+class AirFXMarket():
+    '''
+    AirFXのマーケット情報を取得します。
+
+    対応ドキュメント：なし
+    '''
+
+    def __init__(self, url_config: UrlConfigs = UrlConfigs()):
+        '''
+        コンストラクタ
+        '''
+        self._group_id = 1
+        self._currency_pair = "btc_jpy"
+        self._margin_market = MarginMarket(url_config)
+
+    def get_last_price(self) -> dict:
+        '''
+        現在の終値を取得します。
+        '''
+        return self._margin_market.get_last_price(
+            group_id=self._group_id,
+            currency_pair=self._currency_pair
+        )
+
+    def get_ticker(self) -> dict:
+        '''
+        ティッカーを取得します。
+        '''
+        return self._margin_market.get_ticker(
+            group_id=self._group_id,
+            currency_pair=self._currency_pair
+        )
+
+    def get_trade_history(self) -> dict:
+        '''
+        全ユーザの取引履歴を取得します。
+        '''
+        return self._margin_market.get_trade_history(
+            group_id=self._group_id,
+            currency_pair=self._currency_pair
+        )
+
+    def get_depth(self) -> dict:
+        '''
+        板情報を取得します。
+        '''
+        return self._margin_market.get_depth(
+            group_id=self._group_id,
+            currency_pair=self._currency_pair
+        )
+
+    def get_swap_history(self) -> dict:
+        '''
+        確定したスワップポイントの履歴を取得します。
+        '''
+        return self._margin_market.get_swap_history(
+            group_id=self._group_id,
+            currency_pair=self._currency_pair
+        )
+
+
+class AirFXTrade():
+    '''
+    AirFXの注文情報を取得・送信します。
+
+    対応ドキュメント：AirFXAPI
+    https://zaif-api-document.readthedocs.io/ja/latest/AirFXAPI.html
+    '''
+
+    def __init__(self, key, secret, url_config: UrlConfigs = UrlConfigs()):
+        '''
+        コンストラクタ
+        '''
+        self._type = "futures"
+        self._group_id = 1
+        self._currency_pair = "btc_jpy"
+        self._margin_trade = MarginTrade(key, secret, url_config)
+
+    def get_positions(self, since: datetime = None, end: datetime = None,
+                      _from: int = None, count: int = None,
+                      from_id: int = None, end_id: int = None, order: str = None) -> dict:
+        '''
+        証拠金取引のユーザー自身の取引履歴を取得します。
+        '''
+        return self._margin_trade.get_positions(
+            _type=self._type,
+            group_id=self._group_id,
+            currency_pair=self._currency_pair,
+            since=since,
+            end=end,
+            _from=_from,
+            count=count,
+            from_id=from_id,
+            end_id=end_id,
+            order=order
+        )
+
+    def get_position_history(self, order_id: int) -> dict:
+        '''
+        証拠金取引のユーザー自身の取引履歴の明細を取得します。
+        '''
+        return self._margin_trade.get_position_history(
+            _type=self._type,
+            group_id=self._group_id,
+            order_id=order_id
+        )
+
+    def get_active_positions(self) -> dict:
+        '''
+        証拠金取引の現在有効な注文一覧を取得します（未約定注文一覧）。
+        '''
+        return self._margin_trade.get_active_positions(
+            _type=self._type,
+            group_id=self._group_id,
+            currency_pair=self._currency_pair
+        )
+
+    def create_position(self, action: str, price: Decimal, amount: Decimal, leverage: Decimal, limit: Decimal = None, stop: Decimal = None) -> dict:
+        '''
+        証拠金取引の新規注文を送信します。
+        '''
+        return self._margin_trade.create_position(
+            _type=self._type,
+            group_id=self._group_id,
+            currency_pair=self._currency_pair,
+            action=action,
+            price=price,
+            amount=amount,
+            leverage=leverage,
+            limit=limit,
+            stop=stop
+        )
+
+    def update_position(self, order_id: int, price: Decimal, limit: Decimal = None, stop: Decimal = None) -> dict:
+        '''
+        証拠金取引の修正注文を送信します。
+        '''
+        return self._margin_trade.update_position(
+            _type=self._type,
+            group_id=self._group_id,
+            order_id=order_id,
+            price=price,
+            limit=limit,
+            stop=stop
+        )
+
+    def cancel_position(self, order_id: int) -> dict:
+        '''
+        証拠金取引のキャンセル注文を送信します。
+        '''
+        return self._margin_trade.cancel_position(
+            _type=self._type,
+            group_id=self._group_id,
+            order_id=order_id
+        )
