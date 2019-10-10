@@ -4,9 +4,9 @@ zaifer
 ![](https://img.shields.io/badge/Python-after%20v3-red.svg)
 [![](https://img.shields.io/pypi/v/zaifer.svg)](https://pypi.org/project/zaifer/)
 
-zaiferとは、zaifapiのラッパーライブラリです。
-webapiを利用するための煩雑な手続きを隠蔽し、
-zaifapiをpythonのmethodベースで簡単に利用できます。
+zaiferとは、ZaifAPIをPythonから呼び出すためのライブラリです。
+ebapiを利用するための煩雑な手続きを隠蔽し、
+methodベースでZaifAPIを簡単に利用できます。
 
 使い方
 -------------
