@@ -1,6 +1,6 @@
 from zaifer.zaifapi.connection import *
-from zaifer.zaifapi.method import *
 from zaifer.zaifapi.exception import *
+from zaifer.zaifapi.method import *
 
 __copyright__ = 'Copyright (C) 2018 Yusuke Oya'
 __version__ = '1.1.8'
@@ -15,6 +15,6 @@ __all__ = [
     'Account',
     'Market',
     'Trade',
-    'FutureMarket',
-    'MarginTrade',
+    'MarginMarket',
+    'MarginTrade'
 ]

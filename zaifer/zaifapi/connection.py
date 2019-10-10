@@ -34,6 +34,8 @@ class HttpConnection():
 
         # POST要求を作成
         url = self._base_url + method
+
+        # 認証情報を作成
         encoded_params = urlencode(params)
         http_headers = self._create_http_headers(encoded_params)
 
@@ -93,51 +95,51 @@ class UrlConfigs():
 
     def __init__(self):
 
-        self._publicApiUrl = 'https://api.zaif.jp/api/1'
-        self._tradeApiUrl = 'https://api.zaif.jp/tapi'
-        self._futureTradeApiUrl = 'https://api.zaif.jp/fapi/1'
-        self._marginTradeApiUrl = 'https://api.zaif.jp/tlapi'
-        self._chartApiUrl = 'https://zaif.jp/zaif_chart_api/v1'
+        self._public_api_url = 'https://api.zaif.jp/api/1'
+        self._trade_api_url = 'https://api.zaif.jp/tapi'
+        self._margin_public_api_url = 'https://api.zaif.jp/fapi/1'
+        self._margin_trade_api_url = 'https://api.zaif.jp/tlapi'
+        self._chart_api_url = 'https://zaif.jp/zaif_chart_api/v1'
 
     @property
-    def publicApiUrl(self) -> str:
-        return self._publicApiUrl
+    def public_api_url(self) -> str:
+        return self._public_api_url
 
-    @publicApiUrl.setter
-    def publicApiUrl(self, value: str):
-        self._publicApiUrl = value
-
-    @property
-    def tradeApiUrl(self) -> str:
-        return self._tradeApiUrl
-
-    @tradeApiUrl.setter
-    def tradeApiUrl(self, value: str):
-        self._tradeApiUrl = value
+    @public_api_url.setter
+    def public_api_url(self, value: str):
+        self._public_api_url = value
 
     @property
-    def futureTradeApiUrl(self) -> str:
-        return self._futureTradeApiUrl
+    def trade_api_url(self) -> str:
+        return self._trade_api_url
 
-    @futureTradeApiUrl.setter
-    def futureTradeApiUrl(self, value: str):
-        self._futureTradeApiUrl = value
-
-    @property
-    def marginTradeApiUrl(self) -> str:
-        return self._marginTradeApiUrl
-
-    @marginTradeApiUrl.setter
-    def marginTradeApiUrl(self, value: str):
-        self._marginTradeApiUrl = value
+    @trade_api_url.setter
+    def trade_api_url(self, value: str):
+        self._trade_api_url = value
 
     @property
-    def chartApiUrl(self) -> str:
-        return self._chartApiUrl
+    def margin_public_api_url(self) -> str:
+        return self._margin_public_api_url
 
-    @chartApiUrl.setter
-    def chartApiUrl(self, value: str):
-        self._chartApiUrl = value
+    @margin_public_api_url.setter
+    def margin_public_api_url(self, value: str):
+        self._margin_public_api_url = value
+
+    @property
+    def margin_trade_api_url(self) -> str:
+        return self._margin_trade_api_url
+
+    @margin_trade_api_url.setter
+    def margin_trade_api_url(self, value: str):
+        self._margin_trade_api_url = value
+
+    @property
+    def chart_api_url(self) -> str:
+        return self._chart_api_url
+
+    @chart_api_url.setter
+    def chart_api_url(self, value: str):
+        self._chart_api_url = value
 
 
 class NonceGenerator():

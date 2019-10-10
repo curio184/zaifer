@@ -1,6 +1,11 @@
 import json
+import time
+from datetime import datetime
+from decimal import Decimal
 
-from zaifer.zaifapi.connection import *
+from zaifer.zaifapi.connection import (HttpConnection, NonceGenerator,
+                                       ResponseParser, UrlConfigs)
+from zaifer.zaifapi.utils import NumericConverter
 
 
 class Chart():
@@ -28,7 +33,7 @@ class Chart():
         }
         res = self._connection.get('/history', params)
         # NOTE:取得に成功した場合、なぜか2度エンコードされているのでデコードも2度する
-        if type(res) is str:
+        if isinstance(res, str):
             return json.loads(res)
         else:
             return res
@@ -37,6 +42,9 @@ class Chart():
 class Account():
     '''
     アカウント情報を取得します。
+
+    対応ドキュメント：現物取引API
+    https://zaif-api-document.readthedocs.io/ja/latest/TradingAPI.html
     '''
 
     def __init__(self, key, secret, url_config: UrlConfigs = UrlConfigs()):
@@ -47,7 +55,7 @@ class Account():
 
     def get_info(self) -> dict:
         '''
-        アカウント情報を取得します。
+        残高情報を取得します。
         '''
         params = {
             'method': 'get_info',
@@ -58,7 +66,7 @@ class Account():
 
     def get_info2(self) -> dict:
         '''
-        アカウント情報を取得します。(軽量版)
+        残高情報を取得します。(軽量版)
         '''
         params = {
             'method': 'get_info2',
@@ -69,7 +77,7 @@ class Account():
 
     def get_personal_info(self) -> dict:
         '''
-        アカウントのチャット情報を取得します。
+        チャット情報を取得します。
         '''
         params = {
             'method': 'get_personal_info',
@@ -80,7 +88,7 @@ class Account():
 
     def get_id_info(self) -> dict:
         '''
-        アカウントの基本情報を取得します。
+        アカウント情報を取得します。
         '''
         params = {
             'method': 'get_id_info',
@@ -89,9 +97,10 @@ class Account():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
-    def withdraw(self, currency: str, address: str, amount: Decimal, message: str = None, opt_fee: Decimal = None) -> dict:
+    def withdraw(self, currency: str, address: str, amount: Decimal,
+                 message: str = None, opt_fee: Decimal = None) -> dict:
         '''
-        出金依頼を送信します。
+        出金を依頼します。
         '''
         params = {
             'method': 'withdraw',
@@ -107,7 +116,9 @@ class Account():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
-    def get_deposit_history_by_period(self, currency: str, since: datetime = None, end: datetime = None) -> dict:
+    def get_deposit_history(self, currency: str, _from: int = None, count: int = None,
+                            from_id: int = None, end_id: int = None, order: str = None,
+                            since: datetime = None, end: datetime = None) -> dict:
         '''
         入金履歴を取得します。
         '''
@@ -116,6 +127,16 @@ class Account():
             'nonce': NonceGenerator.generate(),
             'currency': currency
         }
+        if _from is not None:
+            params['from'] = str(_from)
+        if count is not None:
+            params['count'] = str(count)
+        if from_id is not None:
+            params['from_id'] = str(from_id)
+        if end_id is not None:
+            params['end_id'] = str(end_id)
+        if order is not None:
+            params['order'] = order
         if since is not None:
             params['since'] = str(int(time.mktime(since.timetuple())))
         if end is not None:
@@ -123,7 +144,9 @@ class Account():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
-    def get_withdraw_history_by_period(self, currency: str, since: datetime = None, end: datetime = None) -> dict:
+    def get_withdraw_history(self, currency: str, _from: int = None, count: int = None,
+                             from_id: int = None, end_id: int = None, order: str = None,
+                             since: datetime = None, end: datetime = None) -> dict:
         '''
         出金履歴を取得します。
         '''
@@ -132,6 +155,16 @@ class Account():
             'nonce': NonceGenerator.generate(),
             'currency': currency
         }
+        if _from is not None:
+            params['from'] = str(_from)
+        if count is not None:
+            params['count'] = str(count)
+        if from_id is not None:
+            params['from_id'] = str(from_id)
+        if end_id is not None:
+            params['end_id'] = str(end_id)
+        if order is not None:
+            params['order'] = order
         if since is not None:
             params['since'] = str(int(time.mktime(since.timetuple())))
         if end is not None:
@@ -143,6 +176,9 @@ class Account():
 class Market():
     '''
     現物取引のマーケット情報を取得します。
+
+    対応ドキュメント：現物公開API
+    https://zaif-api-document.readthedocs.io/ja/latest/PublicAPI.html
     '''
 
     def __init__(self, url_config: UrlConfigs = UrlConfigs()):
@@ -191,6 +227,9 @@ class Market():
 class Trade():
     '''
     現物取引の注文情報を取得・送信します。
+
+    対応ドキュメント：現物取引API
+    https://zaif-api-document.readthedocs.io/ja/latest/TradingAPI.html
     '''
 
     def __init__(self, key, secret, url_config: UrlConfigs = UrlConfigs()):
@@ -199,7 +238,10 @@ class Trade():
         '''
         self._connection = HttpConnection(url_config.tradeApiUrl, key, secret)
 
-    def get_trade_history_by_period(self, currency_pair: str = None, since: datetime = None, end: datetime = None) -> dict:
+    def get_trade_history(self, currency_pair: str = None, since: datetime = None, end: datetime = None,
+                          _from: int = None, count: int = None,
+                          from_id: int = None, end_id: int = None,
+                          order: str = None, is_token: bool = None) -> dict:
         '''
         ユーザー自身の取引履歴を取得します。
         '''
@@ -207,16 +249,28 @@ class Trade():
             'method': 'trade_history',
             'nonce': NonceGenerator.generate()
         }
-        if currency_pair is not None:
-            params['currency_pair'] = currency_pair
+        if _from is not None:
+            params['from'] = str(_from)
+        if count is not None:
+            params['count'] = str(count)
+        if from_id is not None:
+            params['from_id'] = str(from_id)
+        if end_id is not None:
+            params['end_id'] = str(end_id)
+        if order is not None:
+            params['order'] = order
         if since is not None:
             params['since'] = str(int(time.mktime(since.timetuple())))
         if end is not None:
             params['end'] = str(int(time.mktime(end.timetuple())))
+        if currency_pair is not None:
+            params['currency_pair'] = currency_pair
+        if is_token is not None:
+            params['is_token'] = is_token
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
-    def get_active_orders(self, currency_pair: str = None) -> dict:
+    def get_active_orders(self, currency_pair: str = None, is_token: bool = None, is_token_both: bool = None) -> dict:
         '''
         現在有効な注文一覧を取得します（未約定注文一覧）。
         '''
@@ -226,6 +280,10 @@ class Trade():
         }
         if currency_pair is not None:
             params['currency_pair'] = currency_pair
+        if is_token is not None:
+            params['is_token'] = str(is_token)
+        if is_token_both is not None:
+            params['is_token_both'] = str(is_token_both)
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
@@ -238,8 +296,8 @@ class Trade():
             'nonce': NonceGenerator.generate(),
             'currency_pair': currency_pair,
             'action': action,
-            'price': self._decimal_to_str(price),
-            'amount': self._decimal_to_str(amount)
+            'price': NumericConverter.decimal_to_str(price),
+            'amount': NumericConverter.decimal_to_str(amount)
         }
         if limit is not None:
             params['limit'] = limit
@@ -248,7 +306,7 @@ class Trade():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
-    def cancel_order(self, order_id: int, currency_pair: str = None) -> dict:
+    def cancel_order(self, order_id: int, currency_pair: str = None, is_token: bool = None) -> dict:
         '''
         キャンセル注文を送信します。
         '''
@@ -259,33 +317,36 @@ class Trade():
         }
         if currency_pair is not None:
             params['currency_pair'] = currency_pair
+        if is_token is not None:
+            params['is_token'] = is_token
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
-    def _decimal_to_str(self, value: Decimal) -> str:
-        if value == value.to_integral_value():
-            return str(value.quantize(Decimal(1)))
-        else:
-            return str(value.normalize())
 
-
-class FutureMarket():
+class MarginMarket():
     '''
-    先物取引のマーケット情報を取得します。
+    証拠金取引(信用取引およびAirFX)のマーケット情報を取得します。
+
+    対応ドキュメント：なし
     '''
 
     def __init__(self, url_config: UrlConfigs = UrlConfigs()):
         '''
         コンストラクタ
         '''
-        self._connection = HttpConnection(url_config.futureTradeApiUrl)
+        self._connection = HttpConnection(url_config.marginPublicApiUrl)
 
-    def get_groups(self, group_id: int) -> dict:
-        '''
+    def get_groups(self, group_id: str) -> dict:
+        """
         先物取引のグループIDを取得します。
-        'all'を指定した場合、取引が終了したものを含むすべてのグループIDを取得し、
-        'active'を指定した場合、現在取引可能なグループIDのみを取得します。
-        '''
+
+        Parameters
+        ----------
+        group_id : str
+            数字を指定した場合、対応するグループIDのみを取得します。
+            'all'を指定した場合、取引が終了したものを含むすべてのグループIDを取得します。
+            'active'を指定した場合、現在取引可能なグループIDのみを取得します。
+        """
         return self._connection.get('/groups/{}'.format(str(group_id)), None)
 
     def get_last_price(self, group_id: int, currency_pair: str) -> dict:
@@ -321,7 +382,11 @@ class FutureMarket():
 
 class MarginTrade():
     '''
-    証拠金取引(信用取引および先物取引)の注文情報を取得・送信します。
+    証拠金取引(信用取引およびAirFX)の注文情報を取得・送信します。
+
+    対応ドキュメント：信用取引API, AirFXAPI
+    https://zaif-api-document.readthedocs.io/ja/latest/MarginTradingAPI.html
+    https://zaif-api-document.readthedocs.io/ja/latest/AirFXAPI.html
     '''
 
     def __init__(self, key, secret, url_config: UrlConfigs = UrlConfigs()):
@@ -331,14 +396,17 @@ class MarginTrade():
         self._connection = HttpConnection(
             url_config.marginTradeApiUrl, key, secret)
 
-    def get_positions(self, type: str, group_id: int = None, currency_pair: str = None, since: datetime = None, end: datetime = None) -> dict:
-        '''
+    def get_positions(self, _type: str, group_id: int = None, currency_pair: str = None,
+                      since: datetime = None, end: datetime = None, _from: int = None, count: int = None,
+                      from_id: int = None, end_id: int = None, order: str = None) -> dict:
+        """
         証拠金取引のユーザー自身の取引履歴を取得します。
-        '''
+        """
+
         params = {
             'method': 'get_positions',
             'nonce': NonceGenerator.generate(),
-            'type': type
+            'type': _type,
         }
         if group_id is not None:
             params['group_id'] = group_id
@@ -348,17 +416,27 @@ class MarginTrade():
             params['since'] = str(int(time.mktime(since.timetuple())))
         if end is not None:
             params['end'] = str(int(time.mktime(end.timetuple())))
+        if _from is not None:
+            params['from'] = str(_from)
+        if count is not None:
+            params['count'] = str(count)
+        if from_id is not None:
+            params['from_id'] = str(from_id)
+        if end_id is not None:
+            params['end_id'] = str(end_id)
+        if order is not None:
+            params['order'] = order
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
-    def position_history(self, type: str, group_id: int, order_id: int) -> dict:
+    def get_position_history(self, _type: str, group_id: int, order_id: int) -> dict:
         '''
         証拠金取引のユーザー自身の取引履歴の明細を取得します。
         '''
         params = {
             'method': 'position_history',
             'nonce': NonceGenerator.generate(),
-            'type': type,
+            'type': _type,
             'leverage_id': order_id
         }
         if group_id is not None:
@@ -366,14 +444,14 @@ class MarginTrade():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
-    def get_active_positions(self, type: str, group_id: int = None, currency_pair: str = None) -> dict:
+    def get_active_positions(self, _type: str, group_id: int = None, currency_pair: str = None) -> dict:
         '''
         証拠金取引の現在有効な注文一覧を取得します（未約定注文一覧）。
         '''
         params = {
             'method': 'active_positions',
             'nonce': NonceGenerator.generate(),
-            'type': type
+            'type': _type
         }
         if group_id is not None:
             params['group_id'] = group_id
@@ -382,14 +460,14 @@ class MarginTrade():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
-    def create_position(self, type: str, group_id: int, currency_pair: str, action: str, price: Decimal, amount: Decimal, leverage: Decimal, limit: Decimal = None, stop: Decimal = None) -> dict:
+    def create_position(self, _type: str, group_id: int, currency_pair: str, action: str, price: Decimal, amount: Decimal, leverage: Decimal, limit: Decimal = None, stop: Decimal = None) -> dict:
         '''
         証拠金取引の新規注文を送信します。
         '''
         params = {
             'method': 'create_position',
             'nonce': NonceGenerator.generate(),
-            'type': type,
+            'type': _type,
             'currency_pair': currency_pair,
             'action': action,
             'price': price,
@@ -405,14 +483,14 @@ class MarginTrade():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
-    def update_position(self, type: str, group_id: int, order_id: int, price: Decimal, limit: Decimal = None, stop: Decimal = None) -> dict:
+    def update_position(self, _type: str, group_id: int, order_id: int, price: Decimal, limit: Decimal = None, stop: Decimal = None) -> dict:
         '''
         証拠金取引の修正注文を送信します。
         '''
         params = {
             'method': 'change_position',
             'nonce': NonceGenerator.generate(),
-            'type': type,
+            'type': _type,
             'leverage_id': order_id,
             'price': price,
         }
@@ -425,14 +503,14 @@ class MarginTrade():
         res = self._connection.post(None, params)
         return ResponseParser.parse(res)
 
-    def cancel_position(self, type: str, group_id: int, order_id: int) -> dict:
+    def cancel_position(self, _type: str, group_id: int, order_id: int) -> dict:
         '''
         証拠金取引のキャンセル注文を送信します。
         '''
         params = {
             'method': 'cancel_position',
             'nonce': NonceGenerator.generate(),
-            'type': type,
+            'type': _type,
             'leverage_id': order_id
         }
         if group_id is not None:
